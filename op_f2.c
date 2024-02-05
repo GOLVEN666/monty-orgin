@@ -1,42 +1,95 @@
 #include "monty.h"
 
 /**
- * _swap - swaps the top two elements of the stack
- *
- * @stack: pointer to the top pointer of the stack
- * @line_number: line number of the code
- *
- * Return: void
- */
-void _swap(stack_t **stack, unsigned int line_number)
+* add - Adds the top two elements of the stack.
+* @head: Head of the list
+* @line: Number of the line
+* Return: Void - Nothing
+**/
+void add(stack_t **head, unsigned int line)
 {
-	int next_num;
+int add_elem;
 
-	line_number = gvar.ln;
-
-	if (!(*stack) || (*stack)->next == NULL)
-	{
-		fprintf(stderr, "L%d: can't swap, stack too short\n", line_number);
-		free_command(gvar.argv);
-		fclose(gvar.fd);
-		exit(EXIT_FAILURE);
-	}
-	next_num = (*stack)->next->n;
-	(*stack)->next->n = (*stack)->n;
-	(*stack)->n = next_num;
+/* Verify If the stack contains less than two elements */
+if (!head || !(*head) || !(*head)->next)
+{
+fprintf(stderr, "L%u: can't add, stack too short\n", line);
+exit(EXIT_FAILURE);
 }
 
+add_elem = (*head)->n;
+add_elem += (*head)->next->n;
+pop(head, line);
+(*head)->n = add_elem;
+}
 
 /**
- * _nop - doesn't do anything
- *
- * @stack: pointer to the top pointer of the stack
- * @line_number: line number of the code
- *
- * Return: void
- */
-void _nop(stack_t **stack, unsigned int line_number)
+ * sub - subtracts the top element of the stack from the second
+ * top element of the stack.
+ * @head: Head of the list
+ * @line: Number of the line
+ * Return: Void - Nothing
+ **/
+
+void sub(stack_t **head, unsigned int line)
 {
-	(void)**stack;
-	(void)line_number;
+/* Verify If the stack contains less than two elements */
+if (!head || !(*head) || !(*head)->next)
+{
+fprintf(stderr, "L%u: can't sub, stack too short\n", line);
+exit(EXIT_FAILURE);
+}
+(*head)->next->n -= (*head)->n;
+(*head) = (*head)->next;
+free((*head)->prev);
+(*head)->prev = NULL;
+}
+
+/**
+ * mul -  multiplies the second top element of the stack with
+ * the top element of the stack.
+ * @head: Head of the list
+ * @line: Number of the line
+ * Return: Void - Nothing
+ **/
+
+void mul(stack_t **head, unsigned int line)
+{
+/* Verify If the stack contains less than two elements */
+if (!head || !(*head) || !(*head)->next)
+{
+fprintf(stderr, "L%u: can't mul, stack too short\n", line);
+exit(EXIT_FAILURE);
+}
+(*head)->next->n *= (*head)->n;
+(*head) = (*head)->next;
+free((*head)->prev);
+(*head)->prev = NULL;
+}
+
+/**
+ * _div - This function subtracts the top element of the stack from
+ * the second top element of the stack.
+ * @head: The head of the Stack.
+ * @line: Number of the line.
+ * Return: Void - Nothing.
+ **/
+void _div(stack_t **head, unsigned int line)
+{
+if (!head || !(*head) || !(*head)->next)
+{
+fprintf(stderr, "L%u: can't div, stack too short\n", line);
+exit(EXIT_FAILURE);
+}
+
+if ((*head)->n == 0)
+{
+fprintf(stderr, "L%u: division by zero\n", line);
+exit(EXIT_FAILURE);
+}
+
+(*head)->next->n /= (*head)->n;
+(*head) = (*head)->next;
+free((*head)->prev);
+(*head)->prev = NULL;
 }

@@ -1,164 +1,121 @@
 #include "monty.h"
 
 /**
- * _mul - multiplies the second top element of the stack
- * with the top element of the stack
- *
- * @stack: pointer to the top pointer of the stack
- * @line_number: line number of the code
- *
- * Description: The result is stored in the second top element
- * Return: void
- */
-void _mul(stack_t **stack, unsigned int line_number)
+* swap - Swaps the top two elements of the stack.
+* @head: Head of the list
+* @line: Number of the line
+* Return: Void - Nothing
+**/
+
+void swap(stack_t **head, unsigned int line)
 {
-	int result;
-	stack_t *temp = *stack;
+int tmp; /* Temporal variable for swap */
 
-	line_number = gvar.ln;
+/* Verify If the stack contains less than two elements */
+if (head == NULL || *head == NULL || (*head)->next == NULL)
+{
+fprintf(stderr, "L%u: can't swap, stack too short\n", line);
+exit(EXIT_FAILURE);
+}
 
-	if (!(*stack) || (*stack)->next == NULL)
-	{
-		fprintf(stderr, "L%d: can't mul, stack too short\n", line_number);
-		free_command(gvar.argv);
-		fclose(gvar.fd);
-		exit(EXIT_FAILURE);
-	}
-	result = (*stack)->next->n * (*stack)->n;
-	(*stack)->next->n = result;
-	(*stack) = (*stack)->next;
-	free(temp);
+tmp = (*head)->n;
+(*head)->n = (*head)->next->n;
+(*head)->next->n = tmp;
 }
 
 /**
- * _mod - computes the rest of the division of the second top element
- * of the stack by the top element of the stack
- *
- * @stack: pointer to the top pointer of the stack
- * @line_number: line number of the code
- *
- * Return: void
- */
- * Return: void
- */
-void _mod(stack_t **stack, unsigned int line_number)
+* nop - Doesn’t do anything.
+* @head: Head of the list
+* @line: Number of the line
+* Return: Void - Nothing
+**/
+void nop(stack_t **head, unsigned int line)
 {
-	int result;
-	stack_t *temp = *stack;
-
-	line_number = gvar.ln;
-
-	if (!(*stack) || (*stack)->next == NULL)
-	{
-		fprintf(stderr, "L%d: can't mod, stack too short\n", line_number);
-		free_command(gvar.argv);
-		fclose(gvar.fd);
-		exit(EXIT_FAILURE);
-	}
-	if ((*stack)->n == 0)
-	{
-		fprintf(stderr, "L%d: division by zero\n", line_number);
-		free_command(gvar.argv);
-		fclose(gvar.fd);
-		exit(EXIT_FAILURE);
-	}
-	result = (*stack)->next->n % (*stack)->n;
-	(*stack)->next->n = result;
-	(*stack) = (*stack)->next;
-	free(temp);
+/* Attribute unused*/
+(void) head;
+(void) line;
 }
 
 /**
- * _add - adds the top two elements of the stack
- *
- * Description: The result is stored in the second top element
- * @stack: pointer to the top pointer of the stack
- * @line_number: line number of the code
- *
- * Return: void
- */
-void _add(stack_t **stack, unsigned int line_number)
+* pstr - pstr
+* @head: Head of the list
+* @line: Number of the line
+* Return: Void - Nothing
+**/
+void pstr(stack_t **head, unsigned int line)
 {
-	int result;
-	stack_t *temp = *stack;
+stack_t *current = *head;
 
-	line_number = gvar.ln;
+(void)line;
 
-	if (!(*stack) || (*stack)->next == NULL)
-	{
-		fprintf(stderr, "L%d: can't add, stack too short\n", line_number);
-		free_command(gvar.argv);
-		fclose(gvar.fd);
-		exit(EXIT_FAILURE);
-	}
-	result = (*stack)->n + (*stack)->next->n;
-	(*stack)->next->n = result;
-	(*stack) = (*stack)->next;
-	free(temp);
+while (current != NULL && current->n > 0 && current->n <= 127)
+{
+if (current->n == '\0')
+break;
+
+putchar(current->n);
+current = current->next;
+}
+
+putchar('\n');
+}
+
+/**
+ * rotl - Rotates the stack to the top
+ * @head: Head of the list
+ * @line: Number of the line
+ * Return: Void - Nothing
+ **/
+void rotl(stack_t **head, unsigned int line)
+{
+stack_t *temp, *last;
+
+(void)line;
+
+if (*head == NULL || (*head)->next == NULL)
+return;
+
+temp = *head;
+last = *head;
+
+while (last->next != NULL)
+last = last->next;
+
+*head = (*head)->next;
+(*head)->prev = NULL;
+last->next = temp;
+temp->prev = last;
+temp->next = NULL;
 }
 
 
 /**
- * _sub - subtracts the top element of the stack
- * from the second top element of the stack
- *
- * @stack: pointer to the top pointer of the stack
- * @line_number: line number of the code
- *
- * Return: void
- */
-void _sub(stack_t **stack, unsigned int line_number)
+ * rotr - Rotates the stack to the bottom
+ * @head: Head of the list
+ * @line: Number of the line
+ * Return: Void - Nothing
+ **/
+void rotr(stack_t **head, unsigned int line)
 {
-	int result;
-	stack_t *temp = *stack;
+stack_t *last, *second_last;
 
-	line_number = gvar.ln;
+(void)line;
 
-	if (!(*stack) || (*stack)->next == NULL)
-	{
-		fprintf(stderr, "L%d: can't sub, stack too short\n", line_number);
-		free_command(gvar.argv);
-		fclose(gvar.fd);
-		exit(EXIT_FAILURE);
-	}
-	result = (*stack)->next->n - (*stack)->n;
-	(*stack)->next->n = result;
-	(*stack) = (*stack)->next;
-	free(temp);
+if (*head == NULL || (*head)->next == NULL)
+return;
+
+last = *head;
+second_last = *head;
+
+while (last->next != NULL)
+{
+second_last = last;
+last = last->next;
 }
 
-/**
- * _divide - divides the second top element of the stack
- * by the top element of the stack
- *
- * @stack: pointer to the top pointer of the stack
- * @line_number: line number of the code
- *
- * Return: void
- */
-void _divide(stack_t **stack, unsigned int line_number)
-{
-	int result;
-	stack_t *temp = *stack;
-
-	line_number = gvar.ln;
-
-	if (!(*stack) || (*stack)->next == NULL)
-	{
-		fprintf(stderr, "L%d: can't div, stack too short\n", line_number);
-		free_command(gvar.argv);
-		fclose(gvar.fd);
-		exit(EXIT_FAILURE);
-	}
-	if ((*stack)->n == 0)
-	{
-		fprintf(stderr, "L%d: division by zero\n", line_number);
-		free_command(gvar.argv);
-		fclose(gvar.fd);
-		exit(EXIT_FAILURE);
-	}
-	result = (*stack)->next->n / (*stack)->n;
-	(*stack)->next->n = result;
-	(*stack) = (*stack)->next;
-	free(temp);
+second_last->next = NULL;
+last->next = *head;
+last->prev = NULL;
+(*head)->prev = last;
+*head = last;
 }

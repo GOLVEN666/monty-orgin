@@ -1,110 +1,111 @@
 #include "monty.h"
 
 /**
- * _push - pushes an element to the stack
- *
- * @stack: pointer to the top pointer of the stack
- * @line_number: line number of the code
- *
- * Return: void
- */
-void _push(stack_t **stack, unsigned int line_number)
+* push - Function for push an element to the stack.
+* @head: Head of the list
+* @line: Number of the line
+* Return: void - nothing
+**/
+
+void push(stack_t **head, unsigned int line)
 {
-	int number, i;
+stack_t *new_node = NULL;
+int count = 0;
+char *str_test = strtok(NULL, LIMITER);
 
-	line_number = gvar.ln;
+if (!str_test)/* if <int> is not an int or if no argument given to push */
+{
+fprintf(stderr, "L%u: usage: push integer\n", line);
+exit(EXIT_FAILURE);
+}
 
-	if (!gvar.argv[1])
-	{
-		fprintf(stderr, "L%d: usage: push integer\n", line_number);
-		free_command(gvar.argv);
-		free_dlistint(*stack);
-		fclose(gvar.fd);
-		exit(EXIT_FAILURE);
-	}
-	for (i = 0; gvar.argv[1][i] != '\0'; i++)
-	{
-		if (!isdigit(gvar.argv[1][i]) && gvar.argv[1][0] != 45)
-		{
-			fprintf(stderr, "L%d: usage: push integer\n", line_number);
-			free_command(gvar.argv);
-			free_dlistint(*stack);
-			fclose(gvar.fd);
-			exit(EXIT_FAILURE);
-		}
-	}
-	number = atoi(gvar.argv[1]);
-	add_dnodeint(stack, number);
+while (str_test[count] != '\0')
+{
+if (!isdigit(str_test[count]) && str_test[count] != '-')
+{
+fprintf(stderr, "L%u: usage: push integer\n", line);
+exit(EXIT_FAILURE);
+}
+count++;
+}
+new_node = malloc(sizeof(stack_t));
+if (new_node == NULL)
+{
+fprintf(stderr, "Error: malloc failed\n");
+exit(EXIT_FAILURE);
+}
+
+new_node->n = atoi(str_test);
+new_node->prev = NULL;
+
+if (*head)
+{
+new_node->next = (*head);
+(*head)->prev = new_node;
+(*head) = new_node;
+}
+else
+{
+(*head) = new_node;
+new_node->next = NULL;
+}
 }
 
 /**
- * _pall - prints all the values on the stack
- *
- * @stack: pointer to the top pointer of the stack
- * @line_number: line number of the code
- *
- * Return: void
- */
-void _pall(stack_t **stack, unsigned int line_number)
-{
-	stack_t *tmp = *stack;
-	(void)line_number;
+* pall - Prints all the values on the stack,
+* starting from the top of the stack.
+* @head: Head of the list
+* @line: Number of the line
+* Return: void - nothing
+**/
 
-	if (*stack)
-	{
-		while (tmp != NULL)
-		{
-			printf("%d\n", tmp->n);
-			tmp = tmp->next;
-		}
-	}
+void pall(stack_t **head, unsigned int line __attribute__((unused)))
+{
+/* Transfer values to not modify original list */
+stack_t *curr = *head;
+
+while (curr)
+{
+printf("%d\n", curr->n);
+curr = curr->next;
+}
 }
 
 /**
- * _pint - prints the value at the top of the stack
- *
- * @stack: pointer to the top pointer of the stack
- * @line_number: line number of the code
- *
- * Return: void
- */
-void _pint(stack_t **stack, unsigned int line_number)
-{
-	line_number = gvar.ln;
+* pint - prints the value at the top of the stack,
+* followed by a new line.
+* @head: Head of the list
+* @line: Number of the line
+* Return: void - nothing
+**/
 
-	if (!(*stack))
-	{
-		fprintf(stderr, "L%d: can't pint, stack empty\n", line_number);
-		free_command(gvar.argv);
-		fclose(gvar.fd);
-		exit(EXIT_FAILURE);
-	}
-	printf("%d\n", (*stack)->n);
+void pint(stack_t **head, unsigned int line)
+{
+/* str_test if the stack is empty */
+if (head == NULL || *head == NULL)
+{
+fprintf(stderr, "L%u: can't pint, stack empty\n", line);
+exit(EXIT_FAILURE);
+}
+printf("%d\n", (*head)->n);
 }
 
 /**
- * _pop - removes the top element of the stack
- *
- * @stack: pointer to the top pointer of the stack
- * @line_number: line number of the code
- *
- * Return: void
- */
-void _pop(stack_t **stack, unsigned int line_number)
+* pop - Removes the top element of the stack.
+* @head: Head of the list
+* @line: Number of the line
+* Return: void - nothing
+**/
+void pop(stack_t **head, unsigned int line)
 {
-	stack_t *temp;
+stack_t *new_list = *head;
 
-	line_number = gvar.ln;
-
-	if (!(*stack))
-	{
-		fprintf(stderr, "L%d: can't pop an empty stack\n", line_number);
-		free_command(gvar.argv);
-		fclose(gvar.fd);
-		exit(EXIT_FAILURE);
-	}
-
-	temp = *stack;
-	*stack = (*stack)->next;
-	free(temp);
+if (head == NULL || *head == NULL)
+{
+fprintf(stderr, "L%u: can't pop an empty stack\n", line);
+exit(EXIT_FAILURE);
+}
+new_list = (*head)->next;
+free(*head);
+*head = new_list;
 }
