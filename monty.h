@@ -1,16 +1,13 @@
 #ifndef MONTY_H
 #define MONTY_H
 
-/* Libraries */
+#define _GNU_SOURCE
 #include <stdio.h>
-#include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
-#include <sys/types.h>
+#include <stdlib.h>
 #include <ctype.h>
-
-#define LIMITER " \n"
-
-/* Structures Doubly linked lists */
+#include <stdarg.h>
 
 /**
  * struct stack_s - doubly linked list representation of a stack (or queue)
@@ -19,13 +16,13 @@
  * @next: points to the next element of the stack (or queue)
  *
  * Description: doubly linked list node structure
- * for stack, queues, LIFO, FIFO Holberton project
+ * for stack, queues, LIFO, FIFO
  */
 typedef struct stack_s
 {
-int n;
-struct stack_s *prev;
-struct stack_s *next;
+        int n;
+        struct stack_s *prev;
+        struct stack_s *next;
 } stack_t;
 
 /**
@@ -34,35 +31,54 @@ struct stack_s *next;
  * @f: function to handle the opcode
  *
  * Description: opcode and its function
- * for stack, queues, LIFO, FIFO Holberton project
+ * for stack, queues, LIFO, FIFO
  */
 typedef struct instruction_s
 {
-char *opcode;
-void (*f)(stack_t **stack, unsigned int line_number);
+        char *opcode;
+        void (*f)(stack_t **stack, unsigned int line_number);
 } instruction_t;
 
-ssize_t _getline(char **line, size_t *line_size, FILE *stream);
+extern stack_t *head;
+typedef void (*op_func)(stack_t **, unsigned int);
 
-void chooser(stack_t **head, char *token, unsigned int line);
+/*file operations*/
+void open_file(char *file_name);
+int parse_line(char *buffer, int line_number, int format);
+void read_file(FILE *);
+int len_chars(FILE *);
+void find_func(char *, char *, int, int);
 
-void freeer(stack_t **head);
+/*Stack operations*/
+stack_t *create_node(int n);
+void free_nodes(void);
+void print_stack(stack_t **, unsigned int);
+void add_to_stack(stack_t **, unsigned int);
+void add_to_queue(stack_t **, unsigned int);
 
-/* Prototypes basic operations */
+void call_fun(op_func, char *, char *, int, int);
 
-void pall(stack_t **head, unsigned int line);
-void push(stack_t **head, unsigned int line);
-void pint(stack_t **head, unsigned int line);
-void swap(stack_t **head, unsigned int line);
-void pop(stack_t **head, unsigned int line);
-void nop(stack_t **head, unsigned int line);
-void add(stack_t **head, unsigned int line);
-void sub(stack_t **head, unsigned int line);
-void mul(stack_t **head, unsigned int line);
-void _div(stack_t **head, unsigned int line);
-void pstr(stack_t **head, unsigned int line);
-void rotl(stack_t **head, unsigned int line);
-void rotr(stack_t **head, unsigned int line);
+void print_top(stack_t **, unsigned int);
+void pop_top(stack_t **, unsigned int);
+void nop(stack_t **, unsigned int);
+void swap_nodes(stack_t **, unsigned int);
 
+/*Math operations with nodes*/
+void add_nodes(stack_t **, unsigned int);
+void sub_nodes(stack_t **, unsigned int);
+void div_nodes(stack_t **, unsigned int);
+void mul_nodes(stack_t **, unsigned int);
+void mod_nodes(stack_t **, unsigned int);
+
+/*String operations*/
+void print_char(stack_t **, unsigned int);
+void print_str(stack_t **, unsigned int);
+void rotl(stack_t **, unsigned int);
+
+/*Error hanlding*/
+void err(int error_code, ...);
+void more_err(int error_code, ...);
+void string_err(int error_code, ...);
+void rotr(stack_t **, unsigned int);
 
 #endif
